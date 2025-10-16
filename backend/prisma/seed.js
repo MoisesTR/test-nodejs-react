@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
-  // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 12);
   await prisma.user.upsert({
     where: { email: 'admin@company.com' },
@@ -19,7 +18,6 @@ async function main() {
     },
   });
 
-  // Create employee user
   const employeePassword = await bcrypt.hash('employee123', 12);
   await prisma.user.upsert({
     where: { email: 'john.doe@company.com' },
@@ -32,12 +30,10 @@ async function main() {
     },
   });
 
-  // Get the created users
   const johnUser = await prisma.user.findUnique({
     where: { email: 'john.doe@company.com' }
   });
 
-  // Create employees
   const employee1 = await prisma.employee.upsert({
     where: { id: 1 },
     update: {},
@@ -59,7 +55,6 @@ async function main() {
     },
   });
 
-  // Create sample requests
   await prisma.request.create({
     data: {
       code: 'REQ-001',
