@@ -1,8 +1,13 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Header from './components/common/Header';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import './App.css';
 
-const Home = () => (
+const Dashboard = () => (
     <div className="page">
         <h1>Employee Management System</h1>
         <p>Welcome to the Employee Management System</p>
@@ -23,20 +28,6 @@ const Home = () => (
     </div>
 );
 
-const Login = () => (
-    <div className="page">
-        <h2>Login</h2>
-        <p>Please enter your credentials to access the system</p>
-    </div>
-);
-
-const Register = () => (
-    <div className="page">
-        <h2>Register</h2>
-        <p>Create a new account to get started</p>
-    </div>
-);
-
 const Employees = () => (
     <div className="page">
         <h2>Employees</h2>
@@ -53,30 +44,42 @@ const Requests = () => (
 
 function App() {
     return (
-        <div className="App">
-            <nav className="navbar">
-                <div className="nav-brand">
-                    <h2>EMS</h2>
-                </div>
-                <div className="nav-links">
-                    <a href="/">Home</a>
-                    <a href="/employees">Employees</a>
-                    <a href="/requests">Requests</a>
-                    <a href="/login">Login</a>
-                    <a href="/register">Register</a>
-                </div>
-            </nav>
-
-            <main className="main-content">
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/employees" element={<Employees />} />
-                    <Route path="/requests" element={<Requests />} />
-                </Routes>
-            </main>
-        </div>
+        <AuthProvider>
+            <div className="App">
+                <Header />
+                <main className="main-content">
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route 
+                            path="/" 
+                            element={
+                                <ProtectedRoute>
+                                    <Dashboard />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/employees" 
+                            element={
+                                <ProtectedRoute>
+                                    <Employees />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/requests" 
+                            element={
+                                <ProtectedRoute>
+                                    <Requests />
+                                </ProtectedRoute>
+                            } 
+                        />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </main>
+            </div>
+        </AuthProvider>
     );
 }
 
