@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { authenticateToken } = require('../../src/middleware/auth');
 const { createTestUser } = require('../utils/testHelpers');
+const { generateToken } = require('../../src/utils/jwt');
 
 describe('Authentication Middleware', () => {
   let mockReq, mockRes, mockNext;
@@ -19,10 +20,7 @@ describe('Authentication Middleware', () => {
   describe('authenticateToken', () => {
     it('should authenticate valid token', async () => {
       const user = await createTestUser();
-      const token = jwt.sign(
-        { userId: user.id, role: user.role },
-        process.env.JWT_SECRET
-      );
+      const token = generateToken({ userId: user.id, role: user.role });
 
       mockReq.headers.authorization = `Bearer ${token}`;
 

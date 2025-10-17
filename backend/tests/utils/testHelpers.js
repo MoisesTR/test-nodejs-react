@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+const { generateToken } = require('../../src/utils/jwt');
 
 // Create a test-specific Prisma client
 const getTestPrisma = () => {
@@ -86,11 +86,7 @@ const createTestRequest = async (employeeId) => {
 
 // Generate JWT token for testing
 const generateTestToken = (userId, role = 'employee') => {
-  return jwt.sign(
-    { userId, role },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+  return generateToken({ userId, role });
 };
 
 // Create authenticated request headers

@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const { createTestUser } = require('../utils/testHelpers');
+const { generateToken } = require('../../src/utils/jwt');
 
 describe('Authentication Controllers', () => {
   describe('POST /api/auth/register', () => {
@@ -79,7 +80,7 @@ describe('Authentication Controllers', () => {
 
   describe('POST /api/auth/login', () => {
     let testUser;
-    
+
     beforeEach(async () => {
       testUser = await createTestUser();
     });
@@ -145,10 +146,7 @@ describe('Authentication Controllers', () => {
   describe('GET /api/auth/profile', () => {
     it('should get user profile with valid token', async () => {
       const user = await createTestUser();
-      const token = require('jsonwebtoken').sign(
-        { userId: user.id, role: user.role },
-        process.env.JWT_SECRET
-      );
+      const token = generateToken({ userId: user.id, role: user.role });
 
       const response = await request(app)
         .get('/api/auth/profile')
