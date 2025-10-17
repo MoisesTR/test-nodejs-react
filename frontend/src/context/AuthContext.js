@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -22,6 +22,11 @@ export const AuthProvider = ({ children }) => {
     const api = axios.create({
         baseURL: API_URL
     });
+
+    // Set initial auth header if token exists
+    if (token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
 
     useEffect(() => {
         if (token) {
@@ -56,7 +61,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', token);
             setToken(token);
             setUser(user);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             return { success: true };
         } catch (error) {
@@ -79,7 +84,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', token);
             setToken(token);
             setUser(user);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             return { success: true };
         } catch (error) {

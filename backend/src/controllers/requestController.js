@@ -1,21 +1,43 @@
 const { PrismaClient } = require('@prisma/client');
+const { getPaginatedData } = require('../utils/pagination');
 
 const prisma = new PrismaClient();
 
 const getRequests = async (req, res) => {
     try {
-        const requests = await prisma.request.findMany({
-            include: {
-                employee: {
-                    select: {
-                        id: true,
-                        name: true
+        const result = await getPaginatedData(
+            req,
+            (params) => prisma.request.findMany({
+                ...params,
+                include: {
+                    employee: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
                     }
                 }
+            }),
+            () => prisma.request.count(),
+            {
+                defaultLimit: 10,
+                maxLimit: 50,
+                defaultOrderBy: { createdAt: 'desc' }
             }
-        });
+        );
 
-        res.json({ success: true, data: { requests } });
+        res.json({ 
+            success: true, 
+            data: { 
+                requests: result.data,
+                page: result.page,
+                limit: result.limit,
+                total: result.total,
+                totalPages: result.totalPages,
+                hasNext: result.hasNext,
+                hasPrev: result.hasPrev
+            } 
+        });
     } catch (error) {
         console.error('Get requests error:', error);
         res.status(500).json({ success: false, error: { message: 'Failed to fetch requests' } });

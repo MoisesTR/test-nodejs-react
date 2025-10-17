@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useDebounce } from '../../hooks/useDebounce';
 import EmployeeForm from './EmployeeForm';
+import Pagination from '../common/Pagination';
 import './EmployeeList.css';
 
 const EmployeeList = () => {
     const { user, api } = useAuth();
     const [employees, setEmployees] = useState([]);
+    const [pagination, setPagination] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -13,14 +17,17 @@ const EmployeeList = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        fetchEmployees();
-    }, []);
+        fetchEmployees(currentPage);
+    }, [currentPage]);
 
-    const fetchEmployees = async () => {
+    const fetchEmployees = async (page = 1) => {
         try {
             setLoading(true);
-            const response = await api.get('/employees');
-            setEmployees(response.data.data.employees);
+            const response = await api.get(`/employees?page=${page}&limit=6`);
+
+            const { employees, ...paginationData } = response.data.data;
+            setEmployees(employees);
+            setPagination(paginationData);
             setError('');
         } catch (err) {
             setError('Failed to fetch employees');
@@ -30,16 +37,18 @@ const EmployeeList = () => {
         }
     };
 
-    const handleEmployeeCreated = (newEmployee) => {
-        setEmployees([newEmployee, ...employees]);
-        setShowForm(false);
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
-    const handleEmployeeUpdated = (updatedEmployee) => {
-        setEmployees(employees.map(emp => 
-            emp.id === updatedEmployee.id ? updatedEmployee : emp
-        ));
+    const handleEmployeeCreated = () => {
+        setShowForm(false);
+        fetchEmployees(currentPage);
+    };
+
+    const handleEmployeeUpdated = () => {
         setEditingEmployee(null);
+        fetchEmployees(currentPage);
     };
 
     const handleEditEmployee = (employee) => {
@@ -54,16 +63,21 @@ const EmployeeList = () => {
 
         try {
             await api.delete(`/employees/${employeeId}`);
-            setEmployees(employees.filter(emp => emp.id !== employeeId));
+            fetchEmployees(currentPage);
         } catch (err) {
             setError('Failed to delete employee');
             console.error('Error deleting employee:', err);
         }
     };
 
-    const filteredEmployees = employees.filter(employee =>
-        employee.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+    // Filter employees on the client side for search
+    const filteredEmployees = debouncedSearchTerm 
+        ? employees.filter(employee =>
+            employee.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+        )
+        : employees;
 
     const isAdmin = user?.role === 'administrator';
 
@@ -147,6 +161,13 @@ const EmployeeList = () => {
                     ))
                 )}
             </div>
+
+            {!debouncedSearchTerm && (
+                <Pagination 
+                    pagination={pagination} 
+                    onPageChange={handlePageChange} 
+                />
+            )}
         </div>
     );
 };

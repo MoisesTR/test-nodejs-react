@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/common/Header';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import EmployeeList from './components/employees/EmployeeList';
 import './App.css';
+
+// Lazy load components for better performance
+const EmployeeList = React.lazy(() => import('./components/employees/EmployeeList'));
+const RequestList = React.lazy(() => import('./components/requests/RequestList'));
 
 const Dashboard = () => (
     <div className="page">
@@ -31,12 +34,7 @@ const Dashboard = () => (
 
 
 
-const Requests = () => (
-    <div className="page">
-        <h2>Requests</h2>
-        <p>Handle employee requests and approvals</p>
-    </div>
-);
+
 
 function App() {
     return (
@@ -59,7 +57,9 @@ function App() {
                             path="/employees" 
                             element={
                                 <ProtectedRoute>
-                                    <EmployeeList />
+                                    <Suspense fallback={<div className="loading">Loading employees...</div>}>
+                                        <EmployeeList />
+                                    </Suspense>
                                 </ProtectedRoute>
                             } 
                         />
@@ -67,7 +67,9 @@ function App() {
                             path="/requests" 
                             element={
                                 <ProtectedRoute>
-                                    <Requests />
+                                    <Suspense fallback={<div className="loading">Loading requests...</div>}>
+                                        <RequestList />
+                                    </Suspense>
                                 </ProtectedRoute>
                             } 
                         />
