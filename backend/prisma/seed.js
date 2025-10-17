@@ -79,39 +79,26 @@ async function main() {
     });
   }
 
-  await prisma.request.create({
-    data: {
-      code: 'REQ-001',
-      description: 'Requesting time off for vacation from Dec 20-24',
-      summary: 'Vacation Request',
-      employeeId: employee1.id,
-    },
-  });
-
-  await prisma.request.create({
-    data: {
-      code: 'REQ-002',
-      description: 'Need new laptop and monitor for development work',
-      summary: 'Equipment Request',
-      employeeId: employee2.id,
-    },
-  });
-
-  // Add more requests to test pagination
+  // Create requests using upsert to prevent duplicates
   const requests = [
-    { code: 'REQ-003', summary: 'Training Request', description: 'Request for React training course', employeeId: 3 },
-    { code: 'REQ-004', summary: 'Sick Leave', description: 'Medical leave for 3 days', employeeId: 4 },
-    { code: 'REQ-005', summary: 'Office Supplies', description: 'Need new desk chair and keyboard', employeeId: 5 },
-    { code: 'REQ-006', summary: 'Remote Work', description: 'Request to work from home 2 days per week', employeeId: 6 },
-    { code: 'REQ-007', summary: 'Conference Attendance', description: 'Attend JavaScript conference in NYC', employeeId: 7 },
-    { code: 'REQ-008', summary: 'Salary Review', description: 'Request for annual salary review meeting', employeeId: 8 },
-    { code: 'REQ-009', summary: 'Parking Permit', description: 'Need parking permit for new car', employeeId: 9 },
-    { code: 'REQ-010', summary: 'Team Building', description: 'Organize team building event for Q4', employeeId: 10 }
+    { id: 1, code: 'REQ-001', summary: 'Vacation Request', description: 'Requesting time off for vacation from Dec 20-24', employeeId: employee1.id },
+    { id: 2, code: 'REQ-002', summary: 'Equipment Request', description: 'Need new laptop and monitor for development work', employeeId: employee2.id },
+    { id: 3, code: 'REQ-003', summary: 'Training Request', description: 'Request for React training course', employeeId: 3 },
+    { id: 4, code: 'REQ-004', summary: 'Sick Leave', description: 'Medical leave for 3 days', employeeId: 4 },
+    { id: 5, code: 'REQ-005', summary: 'Office Supplies', description: 'Need new desk chair and keyboard', employeeId: 5 },
+    { id: 6, code: 'REQ-006', summary: 'Remote Work', description: 'Request to work from home 2 days per week', employeeId: 6 }
   ];
 
   for (const request of requests) {
-    await prisma.request.create({
-      data: request,
+    await prisma.request.upsert({
+      where: { id: request.id },
+      update: {},
+      create: {
+        code: request.code,
+        summary: request.summary,
+        description: request.description,
+        employeeId: request.employeeId,
+      },
     });
   }
 
