@@ -6,7 +6,7 @@ Full-stack app with Node.js, React, and PostgreSQL. JWT auth, role-based access,
 
 ```bash
 git clone https://github.com/MoisesTR/test-nodejs-react
-cd employee-management-system
+cd test-nodejs-react
 docker compose up --build
 ```
 
