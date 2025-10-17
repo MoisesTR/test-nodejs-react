@@ -222,26 +222,7 @@ describe('Request Controllers', () => {
       expect(response.body.error.message).toContain('Employee not found');
     });
 
-    it('should handle long descriptions appropriately', async () => {
-      // Create a fresh employee for this test
-      const requestEmployee = await createTestEmployee();
-      const longDescription = 'A'.repeat(1000);
-      const longDescData = {
-        code: 'REQ-LONG-001',
-        summary: 'Equipment Request',
-        description: longDescription,
-        employeeId: requestEmployee.id
-      };
 
-      const response = await request(app)
-        .post('/api/requests')
-        .set(getAuthHeaders(adminToken))
-        .send(longDescData)
-        .expect(201);
-
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.request.description).toBe(longDescription);
-    });
   });
 
   describe('DELETE /api/requests/:id', () => {

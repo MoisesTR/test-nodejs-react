@@ -10,14 +10,11 @@ let prisma;
 
 // Global test setup
 beforeAll(async () => {
-  console.log('🔧 Initializing test database...');
-
   // Initialize Prisma client
   prisma = new PrismaClient();
 
   try {
     // First, try to create the test database if it doesn't exist
-    console.log('🗄️  Ensuring test database exists...');
     try {
       execSync('docker compose exec -T database psql -U admin -d postgres -c "CREATE DATABASE employee_management_test;" 2>/dev/null || true', {
         stdio: 'pipe'
@@ -27,7 +24,6 @@ beforeAll(async () => {
     }
 
     // Run migrations on test database
-    console.log('📋 Running migrations...');
     execSync('npx prisma migrate deploy', {
       env: { ...process.env },
       stdio: 'pipe'
@@ -35,7 +31,6 @@ beforeAll(async () => {
 
     // Connect to test database
     await prisma.$connect();
-    console.log('✅ Test database connected!');
   } catch (error) {
     console.error('❌ Database setup failed:', error.message);
     console.log('💡 Make sure PostgreSQL is running: npm run test:setup');
@@ -63,7 +58,6 @@ afterEach(async () => {
 afterAll(async () => {
   if (prisma) {
     await prisma.$disconnect();
-    console.log('🔌 Disconnected from test database');
   }
 });
 

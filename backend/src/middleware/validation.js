@@ -25,13 +25,13 @@ const validateCreateRequest = [
     body('summary')
         .notEmpty()
         .withMessage('Summary is required')
-        .isLength({ min: 1, max: 200 })
-        .withMessage('Summary must be between 1 and 200 characters'),
+        .isLength({ min: 1, max: 50 })
+        .withMessage('Summary must be between 1 and 50 characters'),
     body('description')
         .notEmpty()
         .withMessage('Description is required')
-        .isLength({ min: 1, max: 1000 })
-        .withMessage('Description must be between 1 and 1000 characters'),
+        .isLength({ min: 1, max: 50 })
+        .withMessage('Description must be between 1 and 50 characters'),
     body('employeeId')
         .notEmpty()
         .withMessage('Employee ID is required')
