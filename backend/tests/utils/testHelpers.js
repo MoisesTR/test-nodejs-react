@@ -16,62 +16,51 @@ const getTestPrisma = () => {
   return global.testPrisma;
 };
 
-// Create test user with unique identifiers to avoid conflicts
 const createTestUser = async (role = 'employee') => {
   const prisma = getTestPrisma();
   const passwordHash = await bcrypt.hash('testpassword', 12);
-  const timestamp = Date.now();
-  const randomId = Math.floor(Math.random() * 1000);
+  const id = Date.now();
 
   return await prisma.user.create({
     data: {
-      username: `test${role}${timestamp}${randomId}`,
-      email: `test${role}${timestamp}${randomId}@test.com`,
+      username: `test${id}`,
+      email: `test${id}@test.com`,
       passwordHash,
       role
     }
   });
 };
 
-// Create test employee
 const createTestEmployee = async (userId) => {
-  let actualUserId = userId;
-  if (!actualUserId) {
-    const testUser = await createTestUser();
-    actualUserId = testUser.id;
-  }
   const prisma = getTestPrisma();
-  const timestamp = Date.now();
-  const randomId = Math.floor(Math.random() * 1000);
+  const id = Date.now();
 
   return await prisma.employee.create({
     data: {
-      name: `Test Employee ${timestamp}${randomId}`,
+      name: `Test Employee ${id}`,
       hireDate: new Date('2023-01-01'),
       salary: 50000,
-      userId: actualUserId
+      userId
     }
   });
 };
 
-// Create test request
 const createTestRequest = async (employeeId) => {
   const prisma = getTestPrisma();
-  const timestamp = Date.now();
-  const randomId = Math.floor(Math.random() * 1000);
+  const id = Date.now();
 
-  let actualEmployeeId = employeeId;
-  if (!actualEmployeeId) {
-    const testEmployee = await createTestEmployee();
-    actualEmployeeId = testEmployee.id;
+  // If no employeeId provided, create a test employee first
+  if (!employeeId) {
+    const employee = await createTestEmployee();
+    employeeId = employee.id;
   }
 
   return await prisma.request.create({
     data: {
-      code: `TEST-${timestamp}-${randomId}`,
+      code: `TEST-${id}`,
       summary: 'Test Request',
-      description: 'Test request description',
-      employeeId: actualEmployeeId
+      description: 'Test description',
+      employeeId
     },
     include: {
       employee: {
