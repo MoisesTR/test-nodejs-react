@@ -133,7 +133,7 @@ const login = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: req.user.userId },
       select: {
         id: true,
         username: true,

@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
-    "test": "jest",
+    "test": "node scripts/test-setup.js && jest --runInBand",
+    "test:only": "jest",
+    "test:watch": "node scripts/test-setup.js && jest --watch",
+    "test:coverage": "node scripts/test-setup.js && jest --coverage",
+    "test:setup": "node scripts/test-setup.js",
     "db:migrate": "npx prisma migrate dev",
     "db:seed": "node prisma/seed.js"
   },
@@ -24,20 +28,20 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "dotenv": "^16.3.1",
-    "jsonwebtoken": "^9.0.2",
+    "@prisma/client": "^5.7.1",
     "bcryptjs": "^2.4.3",
-    "express-validator": "^7.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
-    "@prisma/client": "^5.7.1"
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "prisma": "^5.7.1"
+    "prisma": "^5.7.1",
+    "supertest": "^6.3.3"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

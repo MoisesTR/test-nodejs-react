@@ -26,9 +26,9 @@ const getRequests = async (req, res) => {
             }
         );
 
-        res.json({ 
-            success: true, 
-            data: { 
+        res.json({
+            success: true,
+            data: {
                 requests: result.data,
                 page: result.page,
                 limit: result.limit,
@@ -36,7 +36,7 @@ const getRequests = async (req, res) => {
                 totalPages: result.totalPages,
                 hasNext: result.hasNext,
                 hasPrev: result.hasPrev
-            } 
+            }
         });
     } catch (error) {
         console.error('Get requests error:', error);
@@ -47,8 +47,10 @@ const getRequests = async (req, res) => {
 const getRequest = async (req, res) => {
     try {
         const { id } = req.params;
+        const requestId = parseInt(id);
+
         const request = await prisma.request.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: requestId },
             include: {
                 employee: {
                     select: {
@@ -74,6 +76,38 @@ const createRequest = async (req, res) => {
     try {
         const { code, description, summary, employeeId } = req.body;
 
+        // Check if employee exists
+        const employee = await prisma.employee.findUnique({
+            where: { id: parseInt(employeeId) }
+        });
+
+        if (!employee) {
+            return res.status(400).json({
+                success: false,
+                error: { message: 'Employee not found' }
+            });
+        }
+
+        // Check for duplicate code
+        const existingRequest = await prisma.request.findUnique({
+            where: { code }
+        });
+
+        if (existingRequest) {
+            return res.status(400).json({
+                success: false,
+                error: { message: 'Request code already exists' }
+            });
+        }
+
+        // Check permissions - only admins can create requests
+        if (req.user.role !== 'administrator') {
+            return res.status(403).json({
+                success: false,
+                error: { message: 'Insufficient permissions' }
+            });
+        }
+
         const request = await prisma.request.create({
             data: {
                 code,
@@ -94,6 +128,12 @@ const createRequest = async (req, res) => {
         res.status(201).json({ success: true, data: { request } });
     } catch (error) {
         console.error('Create request error:', error);
+        if (error.code === 'P2002') {
+            return res.status(400).json({
+                success: false,
+                error: { message: 'Request code already exists' }
+            });
+        }
         res.status(500).json({ success: false, error: { message: 'Failed to create request' } });
     }
 };
@@ -101,10 +141,30 @@ const createRequest = async (req, res) => {
 const deleteRequest = async (req, res) => {
     try {
         const { id } = req.params;
-        await prisma.request.delete({ where: { id: parseInt(id) } });
+        const requestId = parseInt(id);
+
+        // Check if request exists
+        const existingRequest = await prisma.request.findUnique({
+            where: { id: requestId }
+        });
+
+        if (!existingRequest) {
+            return res.status(404).json({
+                success: false,
+                error: { message: 'Request not found' }
+            });
+        }
+
+        await prisma.request.delete({ where: { id: requestId } });
         res.json({ success: true, data: { message: 'Request deleted' } });
     } catch (error) {
         console.error('Delete request error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({
+                success: false,
+                error: { message: 'Request not found' }
+            });
+        }
         res.status(500).json({ success: false, error: { message: 'Failed to delete request' } });
     }
 };
