@@ -18,7 +18,7 @@ describe('Pagination Component', () => {
     };
 
     render(<Pagination pagination={pagination} onPageChange={jest.fn()} />);
-    
+
     expect(screen.getByText('Showing 5 items')).toBeInTheDocument();
   });
 
@@ -32,7 +32,7 @@ describe('Pagination Component', () => {
     };
 
     render(<Pagination pagination={pagination} onPageChange={jest.fn()} />);
-    
+
     expect(screen.getByText('Showing 1 item')).toBeInTheDocument();
   });
 
@@ -46,10 +46,10 @@ describe('Pagination Component', () => {
     };
 
     render(<Pagination pagination={pagination} onPageChange={jest.fn()} />);
-    
+
     expect(screen.getByText('Previous')).toBeInTheDocument();
     expect(screen.getByText('Next')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('Page 2 of 5')).toBeInTheDocument();
   });
 
   it('calls onPageChange when page button is clicked', () => {
@@ -63,10 +63,10 @@ describe('Pagination Component', () => {
     };
 
     render(<Pagination pagination={pagination} onPageChange={mockOnPageChange} />);
-    
+
     const nextButton = screen.getByText('Next');
     fireEvent.click(nextButton);
-    
+
     expect(mockOnPageChange).toHaveBeenCalledWith(3);
   });
 
@@ -81,10 +81,10 @@ describe('Pagination Component', () => {
     };
 
     render(<Pagination pagination={pagination} onPageChange={mockOnPageChange} />);
-    
+
     const prevButton = screen.getByText('Previous');
     fireEvent.click(prevButton);
-    
+
     expect(mockOnPageChange).toHaveBeenCalledWith(2);
   });
 });

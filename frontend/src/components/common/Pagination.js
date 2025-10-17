@@ -19,24 +19,6 @@ const Pagination = ({ pagination, onPageChange }) => {
 
   const { page, totalPages, hasNext, hasPrev } = pagination;
 
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-
-    let start = Math.max(1, page - Math.floor(maxVisible / 2));
-    let end = Math.min(totalPages, start + maxVisible - 1);
-
-    if (end - start + 1 < maxVisible) {
-      start = Math.max(1, end - maxVisible + 1);
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  };
-
   return (
     <div className="pagination">
       <button
@@ -47,15 +29,9 @@ const Pagination = ({ pagination, onPageChange }) => {
         Previous
       </button>
 
-      {getPageNumbers().map(pageNum => (
-        <button
-          key={pageNum}
-          className={`pagination-btn ${pageNum === page ? 'active' : ''}`}
-          onClick={() => onPageChange(pageNum)}
-        >
-          {pageNum}
-        </button>
-      ))}
+      <span className="pagination-info">
+        Page {page} of {totalPages}
+      </span>
 
       <button
         className="pagination-btn"
@@ -64,10 +40,6 @@ const Pagination = ({ pagination, onPageChange }) => {
       >
         Next
       </button>
-
-      <span className="pagination-info">
-        Page {page} of {totalPages} ({pagination.total} total items)
-      </span>
     </div>
   );
 };
