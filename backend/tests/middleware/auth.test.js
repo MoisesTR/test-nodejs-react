@@ -27,7 +27,7 @@ describe('Authentication Middleware', () => {
       await authenticateToken(mockReq, mockRes, mockNext);
 
       expect(mockReq.user).toBeDefined();
-      expect(mockReq.user.userId).toBe(user.id);
+      expect(mockReq.user.id).toBe(user.id);
       expect(mockReq.user.role).toBe(user.role);
       expect(mockNext).toHaveBeenCalled();
       expect(mockRes.status).not.toHaveBeenCalled();
