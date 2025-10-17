@@ -41,7 +41,7 @@ const EmployeeForm = ({ employee, onEmployeeCreated, onEmployeeUpdated, onCancel
       } else {
         response = await api.post('/employees', submitData);
         onEmployeeCreated(response.data.data.employee);
-        
+
         // Reset form only for create
         setFormData({
           name: '',
@@ -50,14 +50,7 @@ const EmployeeForm = ({ employee, onEmployeeCreated, onEmployeeUpdated, onCancel
         });
       }
     } catch (err) {
-      if (err.response?.data?.error?.details) {
-        const validationErrors = err.response.data.error.details
-          .map(detail => detail.msg)
-          .join(', ');
-        setError(validationErrors);
-      } else {
-        setError(err.response?.data?.error?.message || 'Failed to create employee');
-      }
+      setError(err.response?.data?.error?.message || 'Failed to save employee');
     } finally {
       setLoading(false);
     }
@@ -67,9 +60,9 @@ const EmployeeForm = ({ employee, onEmployeeCreated, onEmployeeUpdated, onCancel
     <div className="employee-form-container">
       <form onSubmit={handleSubmit} className="employee-form">
         <h3>{isEditing ? 'Edit Employee' : 'Add New Employee'}</h3>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <div className="form-group">
           <label htmlFor="name">Name *</label>
           <input
@@ -110,20 +103,20 @@ const EmployeeForm = ({ employee, onEmployeeCreated, onEmployeeUpdated, onCancel
         </div>
 
         <div className="form-actions">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onCancel}
             className="btn btn-secondary"
             disabled={loading}
           >
             Cancel
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary"
             disabled={loading}
           >
-            {loading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Employee' : 'Create Employee')}
+            {loading ? 'Saving...' : (isEditing ? 'Update' : 'Create')}
           </button>
         </div>
       </form>
