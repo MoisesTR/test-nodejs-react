@@ -7,28 +7,13 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import './App.css';
 
-// Lazy load components for better performance
 const EmployeeList = React.lazy(() => import('./components/employees/EmployeeList'));
 const RequestList = React.lazy(() => import('./components/requests/RequestList'));
 
 const Dashboard = () => (
     <div className="page">
-        <h1>Employee Management System</h1>
-        <p>Welcome to the Employee Management System</p>
-        <div className="features">
-            <div className="feature-card">
-                <h3>Employee Management</h3>
-                <p>Manage employee information and records</p>
-            </div>
-            <div className="feature-card">
-                <h3>Request Management</h3>
-                <p>Handle employee requests and approvals</p>
-            </div>
-            <div className="feature-card">
-                <h3>Role-based Access</h3>
-                <p>Different permissions for employees and administrators</p>
-            </div>
-        </div>
+        <h1>Dashboard</h1>
+        <p>Welcome back! Use the navigation above to manage employees and requests.</p>
     </div>
 );
 
@@ -45,33 +30,33 @@ function App() {
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route 
-                            path="/" 
+                        <Route
+                            path="/"
                             element={
                                 <ProtectedRoute>
                                     <Dashboard />
                                 </ProtectedRoute>
-                            } 
+                            }
                         />
-                        <Route 
-                            path="/employees" 
+                        <Route
+                            path="/employees"
                             element={
                                 <ProtectedRoute>
-                                    <Suspense fallback={<div className="loading">Loading employees...</div>}>
+                                    <Suspense fallback={<div className="loading">Loading...</div>}>
                                         <EmployeeList />
                                     </Suspense>
                                 </ProtectedRoute>
-                            } 
+                            }
                         />
-                        <Route 
-                            path="/requests" 
+                        <Route
+                            path="/requests"
                             element={
                                 <ProtectedRoute>
-                                    <Suspense fallback={<div className="loading">Loading requests...</div>}>
+                                    <Suspense fallback={<div className="loading">Loading...</div>}>
                                         <RequestList />
                                     </Suspense>
                                 </ProtectedRoute>
-                            } 
+                            }
                         />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
