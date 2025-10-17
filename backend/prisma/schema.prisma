@@ -37,8 +37,8 @@ model Employee {
 model Request {
   id          Int      @id @default(autoincrement())
   code        String   @db.VarChar(50)
-  description String   @db.VarChar(255)
-  summary     String   @db.VarChar(100)
+  description String   @db.VarChar(50)
+  summary     String   @db.VarChar(50)
   employeeId  Int      @map("employee_id")
   createdAt   DateTime @default(now()) @map("created_at")
   

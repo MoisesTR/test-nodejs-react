@@ -45,8 +45,49 @@ const validateLogin = [
   handleValidationErrors
 ];
 
+const validateEmployee = [
+  body('name')
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Name must be between 2 and 100 characters'),
+  body('hireDate')
+    .optional()
+    .isISO8601()
+    .withMessage('Hire date must be a valid date'),
+  body('salary')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Salary must be a positive number'),
+  body('userId')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('User ID must be a positive integer'),
+  handleValidationErrors
+];
+
+const validateRequest = [
+  body('code')
+    .trim()
+    .isLength({ min: 1, max: 50 })
+    .withMessage('Code is required and must be max 50 characters'),
+  body('description')
+    .trim()
+    .isLength({ min: 1, max: 255 })
+    .withMessage('Description is required and must be max 255 characters'),
+  body('summary')
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Summary is required and must be max 100 characters'),
+  body('employeeId')
+    .isInt({ min: 1 })
+    .withMessage('Employee ID must be a positive integer'),
+  handleValidationErrors
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
+  validateEmployee,
+  validateRequest,
   handleValidationErrors
 };

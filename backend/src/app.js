@@ -5,6 +5,8 @@ const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
+const employeeRoutes = require('./routes/employees');
+const requestRoutes = require('./routes/requests');
 
 const prisma = new PrismaClient();
 
@@ -21,6 +23,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/requests', requestRoutes);
 app.get('/api/health', async (req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
