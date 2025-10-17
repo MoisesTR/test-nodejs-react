@@ -5,6 +5,7 @@ import Header from './components/common/Header';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import EmployeeList from './components/employees/EmployeeList';
 import './App.css';
 
 const Dashboard = () => (
@@ -28,12 +29,7 @@ const Dashboard = () => (
     </div>
 );
 
-const Employees = () => (
-    <div className="page">
-        <h2>Employees</h2>
-        <p>View and manage employee information</p>
-    </div>
-);
+
 
 const Requests = () => (
     <div className="page">
@@ -63,7 +59,7 @@ function App() {
                             path="/employees" 
                             element={
                                 <ProtectedRoute>
-                                    <Employees />
+                                    <EmployeeList />
                                 </ProtectedRoute>
                             } 
                         />

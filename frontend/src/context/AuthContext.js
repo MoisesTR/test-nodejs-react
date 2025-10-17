@@ -4,113 +4,119 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState(localStorage.getItem('token'));
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchUserProfile();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
+    // Create API instance
+    const api = axios.create({
+        baseURL: API_URL
+    });
 
-  const fetchUserProfile = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/auth/profile`);
-      setUser(response.data.data.user);
-    } catch (error) {
-      console.error('Failed to fetch user profile:', error);
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
+    useEffect(() => {
+        if (token) {
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            fetchUserProfile();
+        } else {
+            setLoading(false);
+        }
+    }, [token]);
 
-  const login = async (email, password) => {
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password
-      });
+    const fetchUserProfile = async () => {
+        try {
+            const response = await api.get('/auth/profile');
+            setUser(response.data.data.user);
+        } catch (error) {
+            console.error('Failed to fetch user profile:', error);
+            logout();
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      const { user, token } = response.data.data;
-      
-      localStorage.setItem('token', token);
-      setToken(token);
-      setUser(user);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    const login = async (email, password) => {
+        try {
+            const response = await api.post('/auth/login', {
+                email,
+                password
+            });
 
-      return { success: true };
-    } catch (error) {
-      const message = error.response?.data?.error?.message || 'Login failed';
-      return { success: false, error: message };
-    }
-  };
+            const { user, token } = response.data.data;
 
-  const register = async (username, email, password, role = 'employee') => {
-    try {
-      const response = await axios.post(`${API_URL}/auth/register`, {
-        username,
-        email,
-        password,
-        role
-      });
+            localStorage.setItem('token', token);
+            setToken(token);
+            setUser(user);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      const { user, token } = response.data.data;
-      
-      localStorage.setItem('token', token);
-      setToken(token);
-      setUser(user);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            return { success: true };
+        } catch (error) {
+            const message = error.response?.data?.error?.message || 'Login failed';
+            return { success: false, error: message };
+        }
+    };
 
-      return { success: true };
-    } catch (error) {
-      const message = error.response?.data?.error?.message || 'Registration failed';
-      return { success: false, error: message };
-    }
-  };
+    const register = async (username, email, password, role = 'employee') => {
+        try {
+            const response = await api.post('/auth/register', {
+                username,
+                email,
+                password,
+                role
+            });
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
-  };
+            const { user, token } = response.data.data;
 
-  const isAdmin = () => {
-    return user?.role === 'administrator';
-  };
+            localStorage.setItem('token', token);
+            setToken(token);
+            setUser(user);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-  const isEmployee = () => {
-    return user?.role === 'employee' || user?.role === 'administrator';
-  };
+            return { success: true };
+        } catch (error) {
+            const message = error.response?.data?.error?.message || 'Registration failed';
+            return { success: false, error: message };
+        }
+    };
 
-  const value = {
-    user,
-    loading,
-    login,
-    register,
-    logout,
-    isAdmin,
-    isEmployee
-  };
+    const logout = () => {
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+        delete api.defaults.headers.common['Authorization'];
+    };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+    const isAdmin = () => {
+        return user?.role === 'administrator';
+    };
+
+    const isEmployee = () => {
+        return user?.role === 'employee' || user?.role === 'administrator';
+    };
+
+    const value = {
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        isAdmin,
+        isEmployee,
+        api
+    };
+
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
