@@ -116,4 +116,48 @@
   margin: 0.25rem 0;
   font-size: 0.9rem;
   color: #34495e;
+}/* Passwo
+rd toggle styles */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  flex: 1;
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #6c757d;
+  border-radius: 4px;
+}
+
+.password-toggle:hover {
+  color: #495057;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.password-toggle:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.password-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.password-toggle:active svg {
+  transform: scale(0.95);
 }

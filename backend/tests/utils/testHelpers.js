@@ -45,14 +45,21 @@ const createTestEmployee = async (userId) => {
   });
 };
 
-const createTestRequest = async (employeeId) => {
+const createTestRequest = async (employeeId, userId) => {
   const prisma = getTestPrisma();
   const id = Date.now();
 
   // If no employeeId provided, create a test employee first
   let targetEmployeeId = employeeId;
   if (!targetEmployeeId) {
-    const employee = await createTestEmployee();
+    // Create a user first if not provided
+    let targetUserId = userId;
+    if (!targetUserId) {
+      const user = await createTestUser('employee');
+      targetUserId = user.id;
+    }
+    
+    const employee = await createTestEmployee(targetUserId);
     targetEmployeeId = employee.id;
   }
 

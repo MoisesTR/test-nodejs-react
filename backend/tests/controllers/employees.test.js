@@ -28,12 +28,13 @@ describe('Employee Controllers', () => {
       expect(response.body.data.employees.length).toBeGreaterThanOrEqual(1);
       expect(response.body.data.page).toBe(1);
       expect(response.body.data.total).toBeGreaterThanOrEqual(1);
+      
+      // Admin should see salary information
+      const employee = response.body.data.employees[0];
+      expect(employee).toHaveProperty('salary');
     });
 
     it('should get employees list for employee', async () => {
-      await createTestEmployee();
-      await createTestEmployee();
-
       const response = await request(app)
         .get('/api/employees')
         .set(getAuthHeaders(employeeToken))
@@ -41,6 +42,12 @@ describe('Employee Controllers', () => {
 
       expect(response.body.success).toBe(true);
       expect(response.body.data.employees.length).toBeGreaterThanOrEqual(1);
+      
+      // Employee should NOT see salary information
+      const employee = response.body.data.employees[0];
+      expect(employee).not.toHaveProperty('salary');
+      expect(employee).toHaveProperty('name');
+      expect(employee).toHaveProperty('hireDate');
     });
 
     it('should support pagination', async () => {

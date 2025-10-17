@@ -5,9 +5,20 @@ const prisma = new PrismaClient();
 
 const getEmployees = async (req, res) => {
   try {
+    const isAdmin = req.user.role === 'administrator';
+    
     const result = await getPaginatedData(
       req,
-      (params) => prisma.employee.findMany(params),
+      (params) => prisma.employee.findMany({
+        ...params,
+        select: {
+          id: true,
+          name: true,
+          hireDate: true,
+          createdAt: true,
+          ...(isAdmin && { salary: true }) // Only show salary to admins
+        }
+      }),
       () => prisma.employee.count(),
       {
         defaultLimit: 10,
@@ -37,8 +48,17 @@ const getEmployees = async (req, res) => {
 const getEmployee = async (req, res) => {
   try {
     const { id } = req.params;
+    const isAdmin = req.user.role === 'administrator';
+    
     const employee = await prisma.employee.findUnique({
-      where: { id: parseInt(id) }
+      where: { id: parseInt(id) },
+      select: {
+        id: true,
+        name: true,
+        hireDate: true,
+        createdAt: true,
+        ...(isAdmin && { salary: true }) // Only show salary to admins
+      }
     });
 
     if (!employee) {

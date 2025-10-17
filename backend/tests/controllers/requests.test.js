@@ -92,7 +92,7 @@ describe('Request Controllers', () => {
     });
 
     it('should get request by id for employee', async () => {
-      const testRequest = await createTestRequest();
+      const testRequest = await createTestRequest(null, employeeUser.id);
 
       const response = await request(app)
         .get(`/api/requests/${testRequest.id}`)

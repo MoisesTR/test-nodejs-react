@@ -5,10 +5,22 @@ const prisma = new PrismaClient();
 
 const getRequests = async (req, res) => {
     try {
+        const isAdmin = req.user.role === 'administrator';
+
+        // For employees, only show requests where they are the associated employee
+        const whereClause = isAdmin ? {} : {
+            employee: {
+                user: {
+                    id: req.user.id
+                }
+            }
+        };
+
         const result = await getPaginatedData(
             req,
             (params) => prisma.request.findMany({
                 ...params,
+                where: whereClause,
                 include: {
                     employee: {
                         select: {
@@ -18,7 +30,7 @@ const getRequests = async (req, res) => {
                     }
                 }
             }),
-            () => prisma.request.count(),
+            () => prisma.request.count({ where: whereClause }),
             {
                 defaultLimit: 10,
                 maxLimit: 50,
@@ -48,9 +60,22 @@ const getRequest = async (req, res) => {
     try {
         const { id } = req.params;
         const requestId = parseInt(id);
+        const isAdmin = req.user.role === 'administrator';
 
-        const request = await prisma.request.findUnique({
-            where: { id: requestId },
+        // Build where clause for access control
+        const whereClause = {
+            id: requestId,
+            ...(isAdmin ? {} : {
+                employee: {
+                    user: {
+                        id: req.user.id
+                    }
+                }
+            })
+        };
+
+        const request = await prisma.request.findFirst({
+            where: whereClause,
             include: {
                 employee: {
                     select: {
