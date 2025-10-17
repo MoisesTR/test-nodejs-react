@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }) => {
             const response = await api.get('/auth/profile');
             setUser(response.data.data.user);
         } catch (error) {
-            console.error('Failed to fetch user profile:', error);
             logout();
         } finally {
             setLoading(false);
@@ -98,13 +97,7 @@ export const AuthProvider = ({ children }) => {
         delete api.defaults.headers.common['Authorization'];
     };
 
-    const isAdmin = () => {
-        return user?.role === 'administrator';
-    };
 
-    const isEmployee = () => {
-        return user?.role === 'employee' || user?.role === 'administrator';
-    };
 
     const value = {
         user,
@@ -112,8 +105,6 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        isAdmin,
-        isEmployee,
         api
     };
 

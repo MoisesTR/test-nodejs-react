@@ -16,7 +16,7 @@ describe('Role Authorization Middleware', () => {
 
   describe('requireAdmin', () => {
     it('should allow administrator access', () => {
-      mockReq.user = { userId: 1, role: 'administrator' };
+      mockReq.user = { id: 1, role: 'administrator' };
 
       requireAdmin(mockReq, mockRes, mockNext);
 
@@ -25,7 +25,7 @@ describe('Role Authorization Middleware', () => {
     });
 
     it('should deny employee access', () => {
-      mockReq.user = { userId: 1, role: 'employee' };
+      mockReq.user = { id: 1, role: 'employee' };
 
       requireAdmin(mockReq, mockRes, mockNext);
 
@@ -51,7 +51,7 @@ describe('Role Authorization Middleware', () => {
     });
 
     it('should deny access with invalid role', () => {
-      mockReq.user = { userId: 1, role: 'invalid' };
+      mockReq.user = { id: 1, role: 'invalid' };
 
       requireAdmin(mockReq, mockRes, mockNext);
 
@@ -62,7 +62,7 @@ describe('Role Authorization Middleware', () => {
 
   describe('requireEmployee', () => {
     it('should allow administrator access', () => {
-      mockReq.user = { userId: 1, role: 'administrator' };
+      mockReq.user = { id: 1, role: 'administrator' };
 
       requireEmployee(mockReq, mockRes, mockNext);
 
@@ -71,7 +71,7 @@ describe('Role Authorization Middleware', () => {
     });
 
     it('should allow employee access', () => {
-      mockReq.user = { userId: 1, role: 'employee' };
+      mockReq.user = { id: 1, role: 'employee' };
 
       requireEmployee(mockReq, mockRes, mockNext);
 
@@ -93,7 +93,7 @@ describe('Role Authorization Middleware', () => {
     });
 
     it('should deny access with invalid role', () => {
-      mockReq.user = { userId: 1, role: 'invalid' };
+      mockReq.user = { id: 1, role: 'invalid' };
 
       requireEmployee(mockReq, mockRes, mockNext);
 

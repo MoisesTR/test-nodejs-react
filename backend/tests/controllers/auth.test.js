@@ -146,7 +146,7 @@ describe('Authentication Controllers', () => {
   describe('GET /api/auth/profile', () => {
     it('should get user profile with valid token', async () => {
       const user = await createTestUser();
-      const token = generateToken({ userId: user.id, role: user.role });
+      const token = generateToken({ id: user.id, role: user.role });
 
       const response = await request(app)
         .get('/api/auth/profile')

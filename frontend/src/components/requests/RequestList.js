@@ -31,7 +31,6 @@ const RequestList = () => {
             setError('');
         } catch (err) {
             setError('Failed to fetch requests');
-            console.error('Error fetching requests:', err);
         } finally {
             setLoading(false);
         }
@@ -46,7 +45,7 @@ const RequestList = () => {
             const response = await api.get('/employees');
             setEmployees(response.data.data.employees);
         } catch (err) {
-            console.error('Error fetching employees:', err);
+            // Silently fail - not critical
         }
     };
 
@@ -66,7 +65,6 @@ const RequestList = () => {
             fetchRequests(currentPage);
         } catch (err) {
             setError('Failed to delete request');
-            console.error('Error deleting request:', err);
         }
     };
 

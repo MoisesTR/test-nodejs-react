@@ -50,9 +50,10 @@ const createTestRequest = async (employeeId) => {
   const id = Date.now();
 
   // If no employeeId provided, create a test employee first
-  if (!employeeId) {
+  let targetEmployeeId = employeeId;
+  if (!targetEmployeeId) {
     const employee = await createTestEmployee();
-    employeeId = employee.id;
+    targetEmployeeId = employee.id;
   }
 
   return await prisma.request.create({
@@ -60,7 +61,7 @@ const createTestRequest = async (employeeId) => {
       code: `TEST-${id}`,
       summary: 'Test Request',
       description: 'Test description',
-      employeeId
+      employeeId: targetEmployeeId
     },
     include: {
       employee: {
@@ -75,7 +76,7 @@ const createTestRequest = async (employeeId) => {
 
 // Generate JWT token for testing
 const generateTestToken = (userId, role = 'employee') => {
-  return generateToken({ userId, role });
+  return generateToken({ id: userId, role });
 };
 
 // Create authenticated request headers

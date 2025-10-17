@@ -20,7 +20,7 @@ describe('Authentication Middleware', () => {
   describe('authenticateToken', () => {
     it('should authenticate valid token', async () => {
       const user = await createTestUser();
-      const token = generateToken({ userId: user.id, role: user.role });
+      const token = generateToken({ id: user.id, role: user.role });
 
       mockReq.headers.authorization = `Bearer ${token}`;
 
@@ -73,7 +73,7 @@ describe('Authentication Middleware', () => {
     it('should reject expired token', async () => {
       const user = await createTestUser();
       const expiredToken = jwt.sign(
-        { userId: user.id, role: user.role },
+        { id: user.id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '-1h' } // Expired 1 hour ago
       );

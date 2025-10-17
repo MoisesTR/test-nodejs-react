@@ -31,7 +31,6 @@ const EmployeeList = () => {
             setError('');
         } catch (err) {
             setError('Failed to fetch employees');
-            console.error('Error fetching employees:', err);
         } finally {
             setLoading(false);
         }
@@ -66,7 +65,6 @@ const EmployeeList = () => {
             fetchEmployees(currentPage);
         } catch (err) {
             setError('Failed to delete employee');
-            console.error('Error deleting employee:', err);
         }
     };
 
@@ -82,7 +80,7 @@ const EmployeeList = () => {
     const isAdmin = user?.role === 'administrator';
 
     if (loading) {
-        return <div className="loading">Loading employees...</div>;
+        return <div className="loading">Loading...</div>;
     }
 
     return (
